@@ -1,0 +1,106 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --hourglass-base: min(
+    calc((100vw - 96px) / 7),
+    calc((100vh - 100px) / 4),
+    210px
+  );
+}
+
+html,
+body {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 24px;
+}
+
+.stage {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 24px;
+  max-width: 100%;
+}
+
+.hourglass-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.hourglass-unit--xlarge .lottie {
+  width: calc(var(--hourglass-base) * 4);
+}
+
+.hourglass-unit--large .lottie {
+  width: calc(var(--hourglass-base) * 2);
+}
+
+.hourglass-unit--small .lottie {
+  width: var(--hourglass-base);
+}
+
+.lottie {
+  aspect-ratio: 1;
+  background: #fff;
+}
+
+.flip-btn {
+  margin-top: 0;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid #5a7aa8;
+  border-radius: 8px;
+  background: #3d5a80;
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.15s;
+}
+
+.hourglass-unit--xlarge .flip-btn {
+  padding: 0 20px;
+  font-size: 24px;
+}
+
+.hourglass-unit--small .flip-btn {
+  padding: 0 12px;
+  font-size: 16px;
+}
+
+.flip-btn.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.flip-btn:hover:not(:disabled) {
+  background: #4a6d9a;
+}
+
+.flip-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
