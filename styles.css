@@ -92,7 +92,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
 }
 
 .hourglass-unit--xlarge .lottie {
@@ -109,54 +108,16 @@ body {
 
 .lottie {
   aspect-ratio: 1;
-  background: #fff;
-}
-
-.flip-btn {
-  margin-top: 0;
   flex-shrink: 0;
-  height: 44px;
-  padding: 0 16px;
-  border: 1px solid #5a7aa8;
-  border-radius: 8px;
-  background: #3d5a80;
-  color: #fff;
-  cursor: pointer;
-  font-size: 20px;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.2s, background 0.15s;
+  background: #fff;
+  cursor: default;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-.hourglass-unit--xlarge .flip-btn {
-  padding: 0 20px;
-  font-size: 24px;
-}
-
-.hourglass-unit--small .flip-btn {
-  padding: 0 12px;
-  font-size: 16px;
-}
-
-.flip-btn.visible {
-  visibility: visible;
-  opacity: 1;
-}
-
-.flip-btn:hover:not(:disabled) {
-  background: #4a6d9a;
-}
-
-.flip-btn:disabled {
-  opacity: 0.45;
-  cursor: default;
+.lottie--ready {
+  cursor: pointer;
 }
 
 .stopwatch {
@@ -167,6 +128,37 @@ body {
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+.stopwatch-indicator-switch {
+  display: flex;
+  align-self: flex-end;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #f5f5f5;
+}
+
+.stopwatch-indicator-switch__btn {
+  border: none;
+  border-radius: 7px;
+  padding: 6px 14px;
+  background: transparent;
+  color: #333;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stopwatch-indicator-switch__btn.is-active {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .stopwatch-face svg {
@@ -240,8 +232,44 @@ body {
   font-size: 20px;
 }
 
+#person {
+  pointer-events: none;
+}
+
+.stopwatch--pendulum #person {
+  visibility: hidden;
+}
+
+.stopwatch--heart #indicator-pendulum {
+  visibility: hidden;
+}
+
+#heartbeat {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.stopwatch--heart #heartbeat {
+  animation: heartbeat-pop 0.85s ease-in-out infinite;
+}
+
+@keyframes heartbeat-pop {
+  0%, 100% {
+    transform: scale(1);
+  }
+  12% {
+    transform: scale(1.28);
+  }
+  24% {
+    transform: scale(1);
+  }
+}
+
 #pendulum {
   transform-origin: 402.573px 9.573px;
+}
+
+.stopwatch--pendulum #pendulum {
   animation: pendulum-swing 1.2s ease-in-out infinite alternate;
 }
 

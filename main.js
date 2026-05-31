@@ -59,19 +59,13 @@ function cloneWithSandPalette(animationData, palette) {
 
 function createHourglass(unitEl, { fallSpeed, flipSpeed, sandPalette }) {
   const lottieEl = unitEl.querySelector('.lottie');
-  const flipBtn = unitEl.querySelector('.flip-btn');
   let mode = 'idle';
   let playSecondFall = false;
   let anim = null;
 
-  function showButton() {
-    flipBtn.classList.add('visible');
-    flipBtn.disabled = false;
-  }
-
-  function hideButton() {
-    flipBtn.classList.remove('visible');
-    flipBtn.disabled = true;
+  function setReady(ready) {
+    lottieEl.classList.toggle('lottie--ready', ready);
+    lottieEl.setAttribute('aria-disabled', ready ? 'false' : 'true');
   }
 
   function playSegment(from, to, speed = 1) {
@@ -93,20 +87,20 @@ function createHourglass(unitEl, { fallSpeed, flipSpeed, sandPalette }) {
 
   async function runFall() {
     mode = 'animating';
-    hideButton();
+    setReady(false);
     const fallFrames = playSecondFall
       ? [FRAMES.FALL2_START, FRAMES.FALL2_END]
       : [FRAMES.FALL1_START, FRAMES.FALL1_END];
     await playSegment(fallFrames[0], fallFrames[1], fallSpeed);
     mode = 'idle';
-    showButton();
+    setReady(true);
   }
 
   async function onFlip() {
     if (mode === 'animating') return;
 
     mode = 'animating';
-    hideButton();
+    setReady(false);
 
     await playSegment(FRAMES.FLIP_START, FRAMES.FLIP_END, flipSpeed);
     playSecondFall = !playSecondFall;
@@ -124,11 +118,17 @@ function createHourglass(unitEl, { fallSpeed, flipSpeed, sandPalette }) {
       animationData: data,
     });
 
-    flipBtn.addEventListener('click', onFlip);
+    lottieEl.addEventListener('click', onFlip);
+    lottieEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onFlip();
+      }
+    });
 
     anim.addEventListener('DOMLoaded', () => {
       anim.goToAndStop(FRAMES.FALL1_END, true);
-      showButton();
+      setReady(true);
     });
   }
 
@@ -210,6 +210,19 @@ function createStopwatch(containerEl) {
     }
   }
 
+  function setIndicator(mode) {
+    containerEl.classList.toggle('stopwatch--heart', mode === 'heart');
+    containerEl.classList.toggle('stopwatch--pendulum', mode === 'pendulum');
+    containerEl.querySelectorAll('[data-indicator]').forEach((btn) => {
+      btn.classList.toggle('is-active', btn.dataset.indicator === mode);
+    });
+  }
+
+  function onIndicatorClick(e) {
+    const btn = e.target.closest('[data-indicator]');
+    if (btn) setIndicator(btn.dataset.indicator);
+  }
+
   function onStart() {
     setRunning(!running);
   }
@@ -231,6 +244,8 @@ function createStopwatch(containerEl) {
   btnStart.addEventListener('click', onStart);
   btnLap.addEventListener('click', onLap);
   btnReset.addEventListener('click', onReset);
+  containerEl.addEventListener('click', onIndicatorClick);
+  setIndicator('pendulum');
   renderTimes();
 }
 
@@ -258,7 +273,14 @@ function initStopwatch() {
       return r.text();
     })
     .then((svg) => {
-      container.innerHTML = `<div class="stopwatch-face">${svg}</div><div class="stopwatch-laps" id="stopwatch-laps"></div>`;
+      container.innerHTML = `
+        <div class="stopwatch-indicator-switch" role="group" aria-label="Indikátor stopek">
+          <button type="button" class="stopwatch-indicator-switch__btn is-active" data-indicator="pendulum">Kyvadlo</button>
+          <button type="button" class="stopwatch-indicator-switch__btn" data-indicator="heart">Srdce</button>
+        </div>
+        <div class="stopwatch-face">${svg}</div>
+        <div class="stopwatch-laps" id="stopwatch-laps"></div>
+      `;
       createStopwatch(container);
     })
     .catch((e) => {
